@@ -15,10 +15,15 @@
  */
 package com.example.android.pets;
 
+import android.content.ContentValues;
+import android.content.Context;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -26,8 +31,11 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.TextView;
+import android.widget.Toast;
 
-import com.example.android.pets.pets.PetsContract;
+import com.example.android.pets.pets.PetDpHelper;
+import com.example.android.pets.pets.PetsContract.PetsEntry;
 
 /**
  * Allows user to create a new pet or edit an existing one.
@@ -52,6 +60,8 @@ public class EditorActivity extends AppCompatActivity {
      */
     private int mGender = 0;
 
+    private PetDpHelper mDbHelper;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -62,8 +72,58 @@ public class EditorActivity extends AppCompatActivity {
         mBreedEditText = (EditText) findViewById(R.id.edit_pet_breed);
         mWeightEditText = (EditText) findViewById(R.id.edit_pet_weight);
         mGenderSpinner = (Spinner) findViewById(R.id.spinner_gender);
-
         setupSpinner();
+        mDbHelper=new PetDpHelper(this);
+    }
+    private void displayDatabaseInfo() {
+        // To access our database, we instantiate our subclass of SQLiteOpenHelper
+        // and pass the context, which is the current activity.
+        //PetDpHelper mDbHelper = new PetDpHelper(this);
+
+        // Create and/or open a database to read from it
+        SQLiteDatabase db = mDbHelper.getReadableDatabase();
+
+        // Perform this raw SQL query "SELECT * FROM pets"
+        // to get a Cursor that contains all rows from the pets table.
+        // Cursor cursor = db.rawQuery("SELECT * FROM " + PetsEntry.TABLE_NAME, null);
+        String[] projection =
+                {PetsEntry.COLUMN_PETS_NAME,
+                        PetsEntry.COLUMN_PETS_BREED};
+        String selection = PetsEntry.COLUMN_PETS_GENDER + "=?";
+        String[] selectionArgs = new String[]{String.valueOf(PetsEntry.GENDER_MALE)};
+        Cursor cursor = db.query(PetsEntry.TABLE_NAME, projection, selection, selectionArgs, null, null, null);
+        try {
+            // Display the number of rows in the Cursor (which reflects the number of rows in the
+            // pets table in the database).
+            TextView displayView = (TextView) findViewById(R.id.text_view_pet);
+            displayView.setText("Number of rows in pets database table: " + cursor.getCount());
+        } finally {
+            // Always close the cursor when you're done reading from it. This releases all its
+            // resources and makes it invalid.
+            cursor.close();
+        }
+    }
+
+    private void insertData(){
+        SQLiteDatabase db=mDbHelper.getWritableDatabase();
+        ContentValues values=new ContentValues();
+        String nameOfPet=mNameEditText.getText().toString().trim();
+        String nameOfBreed=mBreedEditText.getText().toString().trim();
+        //String genderSelected=mGenderSpinner.getSelectedItem().toString();
+        String valueOfmeasurement=mWeightEditText.getText().toString().trim();
+        int weight=Integer.parseInt(valueOfmeasurement);
+        values.put(PetsEntry.COLUMN_PETS_NAME,nameOfPet);
+        values.put(PetsEntry.COLUMN_PETS_BREED,nameOfBreed);
+        values.put(PetsEntry.COLUMN_PETS_GENDER,mGender);
+        values.put(PetsEntry.COLUMN_PETS_WEIGHT,weight);
+        long nameOfId=db.insert(PetsEntry.TABLE_NAME,null,values);
+        Log.v("EditorActivity","Number of Id = "+nameOfId);
+        if(nameOfId== -1){
+            Toast.makeText(this,"ERROR "+nameOfId , Toast.LENGTH_LONG ).show();
+        }
+        else {
+            Toast.makeText(this, "Pets Saved with ID " + nameOfId, Toast.LENGTH_LONG).show();
+        }
     }
 
     /**
@@ -88,11 +148,11 @@ public class EditorActivity extends AppCompatActivity {
                 String selection = (String) parent.getItemAtPosition(position);
                 if (!TextUtils.isEmpty(selection)) {
                     if (selection.equals(getString(R.string.gender_male))) {
-                        mGender = PetsContract.PetsEntry.GENDER_MALE; // Male
+                        mGender = PetsEntry.GENDER_MALE; // Male
                     } else if (selection.equals(getString(R.string.gender_female))) {
-                        mGender = PetsContract.PetsEntry.GENDER_FEMALE; // Female
+                        mGender = PetsEntry.GENDER_FEMALE; // Female
                     } else {
-                        mGender = PetsContract.PetsEntry.GENDER_UNKNOWN; // Unknown
+                        mGender = PetsEntry.GENDER_UNKNOWN; // Unknown
                     }
                 }
             }
@@ -119,7 +179,10 @@ public class EditorActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             // Respond to a click on the "Save" menu option
             case R.id.action_save:
-                // Do nothing for now
+                insertData();
+                displayDatabaseInfo();
+                finish();
+
                 return true;
             // Respond to a click on the "Delete" menu option
             case R.id.action_delete:

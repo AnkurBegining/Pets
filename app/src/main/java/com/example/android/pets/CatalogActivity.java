@@ -53,12 +53,19 @@ public class CatalogActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-       //
+        //
         mDbHelper = new PetDpHelper(this);
         //SQLiteDatabase db = mDbHelper.getReadableDatabase();
-        //displayDatabaseInfo();
+        displayDatabaseInfo();
 
     }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        displayDatabaseInfo();
+    }
+
     /**
      * Temporary helper method to display information in the onscreen TextView about the state of
      * the pets database.
@@ -73,7 +80,13 @@ public class CatalogActivity extends AppCompatActivity {
 
         // Perform this raw SQL query "SELECT * FROM pets"
         // to get a Cursor that contains all rows from the pets table.
-        Cursor cursor = db.rawQuery("SELECT * FROM " + PetsEntry.TABLE_NAME, null);
+        // Cursor cursor = db.rawQuery("SELECT * FROM " + PetsEntry.TABLE_NAME, null);
+        String[] projection =
+                {PetsEntry.COLUMN_PETS_NAME,
+                        PetsEntry.COLUMN_PETS_BREED};
+        String selection = PetsEntry.COLUMN_PETS_GENDER + "=?";
+        String[] selectionArgs = new String[]{String.valueOf(PetsEntry.GENDER_MALE)};
+        Cursor cursor = db.query(PetsEntry.TABLE_NAME, projection, selection, selectionArgs, null, null, null);
         try {
             // Display the number of rows in the Cursor (which reflects the number of rows in the
             // pets table in the database).
@@ -85,16 +98,17 @@ public class CatalogActivity extends AppCompatActivity {
             cursor.close();
         }
     }
-    private void insertPet(){
-        SQLiteDatabase db =mDbHelper.getWritableDatabase();
 
-        ContentValues values= new ContentValues();
+    private void insertPet() {
+        SQLiteDatabase db = mDbHelper.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
         values.put(PetsEntry.COLUMN_PETS_NAME, "Toto");
-        values.put(PetsEntry.COLUMN_PETS_BREED,"Terrier");
-        values.put(PetsEntry.COLUMN_PETS_GENDER,PetsEntry.GENDER_MALE);
+        values.put(PetsEntry.COLUMN_PETS_BREED, "Terrier");
+        values.put(PetsEntry.COLUMN_PETS_GENDER, PetsEntry.GENDER_MALE);
         values.put(PetsEntry.COLUMN_PETS_WEIGHT, 7);
-        long newRowId=db.insert(PetsEntry.TABLE_NAME,null,values);
-        Log.v("CatalogActivity","New ID"+newRowId);
+        long newRowId = db.insert(PetsEntry.TABLE_NAME, null, values);
+        Log.v("CatalogActivity", "New ID" + newRowId);
 
     }
 
