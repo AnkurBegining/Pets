@@ -11,10 +11,10 @@ public final class PetsContract {
         public static final String TABLE_NAME = "Pets";
 
         public static final String _ID=BaseColumns._ID;
-        public static final String COLUMN_NAME="name";
-        public static final String COLUMN_BREED="breed";
-        public static final String COLUMN_GENDER="gender";
-        public static final String COLUMN_WEIGHT="weight";
+        public static final String COLUMN_PETS_NAME ="name";
+        public static final String COLUMN_PETS_BREED ="breed";
+        public static final String COLUMN_PETS_GENDER="gender";
+        public static final String COLUMN_PETS_WEIGHT ="weight";
 
         public static final int GENDER_UNKNOWN=0;
         public static final int GENDER_MALE=1;
