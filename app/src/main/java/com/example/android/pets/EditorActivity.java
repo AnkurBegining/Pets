@@ -31,12 +31,14 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.android.pets.pets.PetDpHelper;
 import com.example.android.pets.pets.PetsContract.PetsEntry;
+import com.example.android.pets.pets.PetsCursorAdapter;
 
 /**
  * Allows user to create a new pet or edit an existing one.
@@ -97,7 +99,7 @@ public class EditorActivity extends AppCompatActivity {
        /* String selection = PetsEntry.COLUMN_PETS_GENDER + "=?";
         String[] selectionArgs = new String[]{String.valueOf(PetsEntry.GENDER_MALE)};*/
         Cursor cursor = db.query(PetsEntry.TABLE_NAME, projection, null, null, null, null, null);
-        TextView displayView = (TextView) findViewById(R.id.text_view_pet);
+        /*TextView displayView = (TextView) findViewById(R.id.text_view_pet);
         try {
             // Display the number of rows in the Cursor (which reflects the number of rows in the
             // pets table in the database).
@@ -132,7 +134,13 @@ public class EditorActivity extends AppCompatActivity {
             // Always close the cursor when you're done reading from it. This releases all its
             // resources and makes it invalid.
             cursor.close();
-        }
+        }*/
+
+        ListView displayView = (ListView)findViewById(R.id.list);
+
+        PetsCursorAdapter adapter = new PetsCursorAdapter(this,cursor);
+
+        displayView.setAdapter(adapter);
 
     }
 

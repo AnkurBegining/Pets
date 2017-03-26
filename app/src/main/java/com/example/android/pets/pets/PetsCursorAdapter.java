@@ -2,9 +2,13 @@ package com.example.android.pets.pets;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CursorAdapter;
+import android.widget.TextView;
+
+import com.example.android.pets.R;
 
 /**
  * PetCursorAdapter is an adapter for a list or grid view
@@ -36,9 +40,9 @@ public class PetsCursorAdapter extends CursorAdapter {
      */
 
     @Override
-    public View newView(Context context, Cursor cursor, ViewGroup viewGroup) {
-        // TODO: Fill out this method and return the list item view (instead of null)
-        return null;
+    public View newView(Context context, Cursor cursor, ViewGroup parent) {
+        //  Fill out this method and return the list item view (instead of null)
+        return LayoutInflater.from(context).inflate(R.layout.list_item,parent,false );
     }
 
 
@@ -56,7 +60,22 @@ public class PetsCursorAdapter extends CursorAdapter {
 
     @Override
     public void bindView(View view, Context context, Cursor cursor) {
-        // TODO: Fill out this method
+        //  Fill out this method
+        //find find to populate in template
+        TextView nameTextView=(TextView)view.findViewById(R.id.name);
+        TextView breedTextView=(TextView)view.findViewById(R.id.summary);
+
+        //Extract properties from Cursor
+        int nameColumnIndex = cursor.getColumnIndex(PetsContract.PetsEntry.COLUMN_PETS_NAME);
+        int breedColumnIndex = cursor.getColumnIndex(PetsContract.PetsEntry.COLUMN_PETS_BREED);
+
+        String nameOfPet=cursor.getString(nameColumnIndex);
+        String breedOfPet=cursor.getString(breedColumnIndex);
+
+        nameTextView.setText(nameOfPet);
+        breedTextView.setText(breedOfPet);
+
+
 
     }
 }

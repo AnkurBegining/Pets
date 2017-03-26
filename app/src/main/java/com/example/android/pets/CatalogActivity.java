@@ -29,11 +29,13 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.example.android.pets.pets.PetDpHelper;
 
 import com.example.android.pets.pets.PetsContract.PetsEntry;
+import com.example.android.pets.pets.PetsCursorAdapter;
 
 /**
  * Displays list of pets that were entered and stored in the app.
@@ -110,7 +112,7 @@ public class CatalogActivity extends AppCompatActivity {
                 null,
                 null
         );
-        TextView displayView = (TextView) findViewById(R.id.text_view_pet);
+        /*TextView displayView = (TextView) findViewById(R.id.text_view_pet);
         try {
             // Display the number of rows in the Cursor (which reflects the number of rows in the
             // pets table in the database).
@@ -142,7 +144,13 @@ public class CatalogActivity extends AppCompatActivity {
             // Always close the cursor when you're done reading from it. This releases all its
             // resources and makes it invalid.
             cursor.close();
-        }
+        }*/
+        ListView displayView = (ListView)findViewById(R.id.list);
+
+        PetsCursorAdapter adapter = new PetsCursorAdapter(this,cursor);
+
+        displayView.setAdapter(adapter);
+
     }
 
     private void insertPet() {
