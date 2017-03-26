@@ -19,6 +19,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
@@ -147,14 +148,28 @@ public class EditorActivity extends AppCompatActivity {
         values.put(PetsEntry.COLUMN_PETS_BREED,nameOfBreed);
         values.put(PetsEntry.COLUMN_PETS_GENDER,mGender);
         values.put(PetsEntry.COLUMN_PETS_WEIGHT,weight);
-        long nameOfId=db.insert(PetsEntry.TABLE_NAME,null,values);
+
+        // Insert a new pet into the provider, returning the content URI for the new pet.
+        Uri newUri = getContentResolver().insert(PetsEntry.CONTENT_URI, values);
+
+        // Show a toast message depending on whether or not the insertion was successful
+        if (newUri == null) {
+            // If the new content URI is null, then there was an error with insertion.
+            Toast.makeText(this, getString(R.string.editor_insert_pet_failed),
+                    Toast.LENGTH_SHORT).show();
+        } else {
+            // Otherwise, the insertion was successful and we can display a toast.
+            Toast.makeText(this, getString(R.string.editor_insert_pet_successful),
+                    Toast.LENGTH_SHORT).show();
+        }
+       /* long nameOfId=db.insert(PetsEntry.TABLE_NAME,null,values);
         Log.v("EditorActivity","Number of Id = "+nameOfId);
         if(nameOfId== -1){
             Toast.makeText(this,"ERROR "+nameOfId , Toast.LENGTH_LONG ).show();
         }
         else {
             Toast.makeText(this, "Pets Saved with ID " + nameOfId, Toast.LENGTH_LONG).show();
-        }
+        }*/
     }
 
     /**
