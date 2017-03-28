@@ -20,7 +20,9 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.RequiresApi;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
@@ -78,27 +80,21 @@ public class EditorActivity extends AppCompatActivity {
         setupSpinner();
         mDbHelper=new PetDpHelper(this);
     }
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     private void displayDatabaseInfo() {
         // To access our database, we instantiate our subclass of SQLiteOpenHelper
         // and pass the context, which is the current activity.
         //PetDpHelper mDbHelper = new PetDpHelper(this);
 
         // Create and/or open a database to read from it
-        SQLiteDatabase db = mDbHelper.getReadableDatabase();
+       // SQLiteDatabase db = mDbHelper.getReadableDatabase();
 
         // Perform this raw SQL query "SELECT * FROM pets"
         // to get a Cursor that contains all rows from the pets table.
         // Cursor cursor = db.rawQuery("SELECT * FROM " + PetsEntry.TABLE_NAME, null);
-        String[] projection =
-                {
-                        PetsEntry._ID,
-                        PetsEntry.COLUMN_PETS_NAME,
-                        PetsEntry.COLUMN_PETS_BREED,
-                        PetsEntry.COLUMN_PETS_GENDER,
-                        PetsEntry.COLUMN_PETS_WEIGHT};
-       /* String selection = PetsEntry.COLUMN_PETS_GENDER + "=?";
+        /* String selection = PetsEntry.COLUMN_PETS_GENDER + "=?";
         String[] selectionArgs = new String[]{String.valueOf(PetsEntry.GENDER_MALE)};*/
-        Cursor cursor = db.query(PetsEntry.TABLE_NAME, projection, null, null, null, null, null);
+        //Cursor cursor = db.query(PetsEntry.TABLE_NAME, projection, null, null, null, null, null);
         /*TextView displayView = (TextView) findViewById(R.id.text_view_pet);
         try {
             // Display the number of rows in the Cursor (which reflects the number of rows in the
@@ -135,6 +131,26 @@ public class EditorActivity extends AppCompatActivity {
             // resources and makes it invalid.
             cursor.close();
         }*/
+
+        String[] projection =
+                {
+                        PetsEntry._ID,
+                        PetsEntry.COLUMN_PETS_NAME,
+                        PetsEntry.COLUMN_PETS_BREED,
+                        PetsEntry.COLUMN_PETS_GENDER,
+                        PetsEntry.COLUMN_PETS_WEIGHT};
+        Cursor cursor=getContentResolver().query(PetsEntry.CONTENT_URI,
+                projection,
+                null,
+                null,
+                null,
+                null
+        );
+
+
+
+
+
 
         ListView displayView = (ListView)findViewById(R.id.list);
 
@@ -227,6 +243,7 @@ public class EditorActivity extends AppCompatActivity {
         return true;
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // User clicked on a menu option in the app bar overflow menu
@@ -234,7 +251,7 @@ public class EditorActivity extends AppCompatActivity {
             // Respond to a click on the "Save" menu option
             case R.id.action_save:
                 insertData();
-                displayDatabaseInfo();
+                //displayDatabaseInfo();
                 finish();
 
                 return true;

@@ -2,6 +2,7 @@ package com.example.android.pets.pets;
 
 import android.net.Uri;
 import android.provider.BaseColumns;
+import android.util.Log;
 
 /**
  * Created by Lenovo on 22-03-2017.
@@ -32,7 +33,9 @@ public final class PetsContract {
           * as the ContentProvider hasn't been given any information on what to do with "staff".
      */
 
-    public static final String PATH_PETS = "Pets";
+    public static final String PATH_PETS = "pets";
+
+
 
 
 
