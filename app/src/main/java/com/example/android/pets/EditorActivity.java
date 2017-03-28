@@ -80,92 +80,14 @@ public class EditorActivity extends AppCompatActivity {
         setupSpinner();
         mDbHelper=new PetDpHelper(this);
     }
-    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
-    private void displayDatabaseInfo() {
-        // To access our database, we instantiate our subclass of SQLiteOpenHelper
-        // and pass the context, which is the current activity.
-        //PetDpHelper mDbHelper = new PetDpHelper(this);
 
-        // Create and/or open a database to read from it
-       // SQLiteDatabase db = mDbHelper.getReadableDatabase();
-
-        // Perform this raw SQL query "SELECT * FROM pets"
-        // to get a Cursor that contains all rows from the pets table.
-        // Cursor cursor = db.rawQuery("SELECT * FROM " + PetsEntry.TABLE_NAME, null);
-        /* String selection = PetsEntry.COLUMN_PETS_GENDER + "=?";
-        String[] selectionArgs = new String[]{String.valueOf(PetsEntry.GENDER_MALE)};*/
-        //Cursor cursor = db.query(PetsEntry.TABLE_NAME, projection, null, null, null, null, null);
-        /*TextView displayView = (TextView) findViewById(R.id.text_view_pet);
-        try {
-            // Display the number of rows in the Cursor (which reflects the number of rows in the
-            // pets table in the database).
-
-            displayView.setText("Number of rows in pets database table: " + cursor.getCount());
-            displayView.append("\n"+
-                    PetsEntry._ID + " - "+
-                    PetsEntry.COLUMN_PETS_NAME+ " - " +
-                    PetsEntry.COLUMN_PETS_BREED +" - "+
-                    PetsEntry.COLUMN_PETS_GENDER+" - "+
-                    PetsEntry.COLUMN_PETS_WEIGHT);
-            int idColumnIndex = cursor.getColumnIndex(PetsEntry._ID);
-            int nameColumnIndex = cursor.getColumnIndex(PetsEntry.COLUMN_PETS_NAME);
-            int breedColumnIndex = cursor.getColumnIndex(PetsEntry.COLUMN_PETS_BREED);
-            int genderColumnIndex = cursor.getColumnIndex(PetsEntry.COLUMN_PETS_GENDER);
-            int weightCoumnIndex = cursor.getColumnIndex(PetsEntry.COLUMN_PETS_WEIGHT);
-
-            while(cursor.moveToNext()){
-                int currentId=cursor.getInt(idColumnIndex);
-                String nameOfPet=cursor.getString(nameColumnIndex);
-                String breedOfPet=cursor.getString(breedColumnIndex);
-                int genderOfPet=cursor.getInt(genderColumnIndex);
-                int weightOfPet=cursor.getInt(weightCoumnIndex);
-                displayView.append("\n"+currentId+" - " +nameOfPet+" - "+breedOfPet+" - "+genderOfPet+" - "+weightOfPet);
-
-            }
-
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-        finally {
-            // Always close the cursor when you're done reading from it. This releases all its
-            // resources and makes it invalid.
-            cursor.close();
-        }*/
-
-        String[] projection =
-                {
-                        PetsEntry._ID,
-                        PetsEntry.COLUMN_PETS_NAME,
-                        PetsEntry.COLUMN_PETS_BREED,
-                        PetsEntry.COLUMN_PETS_GENDER,
-                        PetsEntry.COLUMN_PETS_WEIGHT};
-        Cursor cursor=getContentResolver().query(PetsEntry.CONTENT_URI,
-                projection,
-                null,
-                null,
-                null,
-                null
-        );
-
-
-
-
-
-
-        ListView displayView = (ListView)findViewById(R.id.list);
-
-        PetsCursorAdapter adapter = new PetsCursorAdapter(this,cursor);
-
-        displayView.setAdapter(adapter);
-
-    }
 
     private void insertData(){
         SQLiteDatabase db=mDbHelper.getWritableDatabase();
         ContentValues values=new ContentValues();
         String nameOfPet=mNameEditText.getText().toString().trim();
         String nameOfBreed=mBreedEditText.getText().toString().trim();
-        //String genderSelected=mGenderSpinner.getSelectedItem().toString();
+
         String valueOfmeasurement=mWeightEditText.getText().toString().trim();
         int weight=Integer.parseInt(valueOfmeasurement);
         values.put(PetsEntry.COLUMN_PETS_NAME,nameOfPet);
@@ -186,14 +108,6 @@ public class EditorActivity extends AppCompatActivity {
             Toast.makeText(this, getString(R.string.editor_insert_pet_successful),
                     Toast.LENGTH_SHORT).show();
         }
-       /* long nameOfId=db.insert(PetsEntry.TABLE_NAME,null,values);
-        Log.v("EditorActivity","Number of Id = "+nameOfId);
-        if(nameOfId== -1){
-            Toast.makeText(this,"ERROR "+nameOfId , Toast.LENGTH_LONG ).show();
-        }
-        else {
-            Toast.makeText(this, "Pets Saved with ID " + nameOfId, Toast.LENGTH_LONG).show();
-        }*/
     }
 
     /**
